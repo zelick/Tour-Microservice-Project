@@ -28,8 +28,10 @@ func (handler *TourHandler) Get(writer http.ResponseWriter, req *http.Request) {
 }
 
 func (handler *TourHandler) Create(writer http.ResponseWriter, req *http.Request) {
+	//ResponseWriter - pisanje odgovora
+	//Request - dolazni zahtev
 	var tour model.Tour
-	err := json.NewDecoder(req.Body).Decode(&tour)
+	err := json.NewDecoder(req.Body).Decode(&tour) //dekodiranje json zahteva
 	if err != nil {
 		println("Error while parsing json")
 		writer.WriteHeader(http.StatusBadRequest)

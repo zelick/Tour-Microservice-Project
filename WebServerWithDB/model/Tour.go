@@ -19,9 +19,9 @@ type Tour struct {
 	UserID              int                  `json:"userId"`
 	PublishedDateTime   *time.Time           `json:"publishedDateTime"`
 	ArchivedDateTime    *time.Time           `json:"archivedDateTime"`
-	TourPoints          []TourPoint          `json:"tourPoints"`
-	TourCharacteristics []TourCharacteristic `gorm:"type:TourCharacteristic[]"`
-	TourReviews         []TourReview         `json:"tourReviews"`
+	TourPoints          []TourPoint          `json:"tourPoints" gorm:"foreignKey:TourID"`
+	TourCharacteristics []TourCharacteristic `json:"tourCharacteristics" gorm:"type:json"` //jer je value object
+	TourReviews         []TourReview         `json:"tourReviews" gorm:"foreignKey:TourID"`
 }
 
 func (tour *Tour) BeforeCreate(scope *gorm.DB) error {

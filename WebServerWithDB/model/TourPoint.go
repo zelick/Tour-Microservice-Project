@@ -6,8 +6,9 @@ import (
 )
 
 type TourPoint struct {
-	ID          uuid.UUID `json:"id"`
-	TourID      int64     `json:"tourId"`
+	ID uuid.UUID `json:"id"` //int64?
+	//TourID      int64     //`json:"tourId"`
+	TourID      uuid.UUID `json:"tourId"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Latitude    float64   `json:"latitude"`
