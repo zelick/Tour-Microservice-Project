@@ -34,6 +34,7 @@ func (handler *TourHandler) Create(writer http.ResponseWriter, req *http.Request
 	err := json.NewDecoder(req.Body).Decode(&tour) //dekodiranje json zahteva
 	if err != nil {
 		println("Error while parsing json")
+		println("Greska:", err.Error())
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -45,4 +46,5 @@ func (handler *TourHandler) Create(writer http.ResponseWriter, req *http.Request
 	}
 	writer.WriteHeader(http.StatusCreated)
 	writer.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode(tour) // dodala sam
 }

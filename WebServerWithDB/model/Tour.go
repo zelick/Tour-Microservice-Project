@@ -25,10 +25,10 @@ const (
 type Tour struct {
 	ID                  int                  `json:"id" gorm:"column:Id;primaryKey;autoIncrement"`
 	Name                string               `json:"name" gorm:"not null;type:string"`
-	DifficultyLevel     DifficultyLevel      `json:"difficultyLevel"`
+	DifficultyLevel     string               `json:"difficultyLevel"`
 	Description         string               `json:"description"`
 	Tags                pq.StringArray       `json:"tags" gorm:"type:text[]"`
-	Status              TourStatus           `json:"status"`
+	Status              string               `json:"status"`
 	Price               int                  `json:"price"`
 	UserID              int                  `json:"userId"`
 	PublishedDateTime   time.Time            `json:"publishedDateTime"`
