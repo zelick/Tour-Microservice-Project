@@ -1,20 +1,12 @@
 package model
 
-import (
-	//"github.com/google/uuid"
-	"gorm.io/gorm"
-)
+//"github.com/google/uuid"
 
 type TourCharacteristic struct {
-	//ID            uuid.UUID     `json:"id"`
+	ID            int           `json:"id" gorm:"column:Id;primaryKey;autoIncrement"`
 	Distance      float64       `json:"distance"`
 	Duration      float64       `json:"duration"`
 	TransportType TransportType `json:"transportType"`
-}
-
-func (tc *TourCharacteristic) BeforeCreate(tx *gorm.DB) (err error) {
-	//tc.ID = uuid.New()
-	return nil
 }
 
 type TransportType int

@@ -3,28 +3,37 @@ package model
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/lib/pq"
-	"gorm.io/gorm"
+)
+
+type TourStatus int
+
+const (
+	Draft TourStatus = iota
+	Published
+	Archived
+)
+
+type DifficultyLevel int
+
+const (
+	Easy DifficultyLevel = iota
+	Moderate
+	Difficult
 )
 
 type Tour struct {
-	ID                  uuid.UUID            `json:"id"`
+	ID                  int                  `json:"id" gorm:"column:Id;primaryKey;autoIncrement"`
 	Name                string               `json:"name" gorm:"not null;type:string"`
-	DifficultyLevel     int                  `json:"difficultyLevel"`
+	DifficultyLevel     DifficultyLevel      `json:"difficultyLevel"`
 	Description         string               `json:"description"`
 	Tags                pq.StringArray       `json:"tags" gorm:"type:text[]"`
-	Status              int                  `json:"status"`
+	Status              TourStatus           `json:"status"`
 	Price               int                  `json:"price"`
 	UserID              int                  `json:"userId"`
-	PublishedDateTime   *time.Time           `json:"publishedDateTime"`
-	ArchivedDateTime    *time.Time           `json:"archivedDateTime"`
+	PublishedDateTime   time.Time            `json:"publishedDateTime"`
+	ArchivedDateTime    time.Time            `json:"archivedDateTime"`
 	TourPoints          []TourPoint          `json:"tourPoints" gorm:"foreignKey:TourID"`
 	TourCharacteristics []TourCharacteristic `json:"tourCharacteristics" gorm:"type:json"` //jer je value object
 	TourReviews         []TourReview         `json:"tourReviews" gorm:"foreignKey:TourID"`
-}
-
-func (tour *Tour) BeforeCreate(scope *gorm.DB) error {
-	tour.ID = uuid.New()
-	return nil
 }
