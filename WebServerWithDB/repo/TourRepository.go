@@ -27,3 +27,12 @@ func (repo *TourRepository) CreateTour(tour *model.Tour) error {
 	println("Rows affected: ", dbResult.RowsAffected)
 	return nil
 }
+
+func (repo *TourRepository) FindByUserId(userID int) ([]model.Tour, error) {
+	var tours []model.Tour
+	dbResult := repo.DatabaseConnection.Where("user_id = ?", userID).Find(&tours) //autorId
+	if dbResult.Error != nil {
+		return nil, dbResult.Error
+	}
+	return tours, nil
+}

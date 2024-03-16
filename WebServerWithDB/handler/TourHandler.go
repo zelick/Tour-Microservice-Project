@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -47,4 +48,38 @@ func (handler *TourHandler) Create(writer http.ResponseWriter, req *http.Request
 	writer.WriteHeader(http.StatusCreated)
 	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(tour) // dodala sam
+}
+
+func (handler *TourHandler) GetByUserId(writer http.ResponseWriter, req *http.Request) {
+	// Koristimo mux.Vars da bismo dobili vrednosti putanje
+	vars := mux.Vars(req)
+	userIdStr, ok := vars["userId"]
+	if !ok {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	// Konvertujemo userID iz stringa u integer
+	userID, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	tours, err := handler.TourService.FindByUserId(userID)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	jsonResponse, err := json.Marshal(tours)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Postavljanje Content-Type zaglavlja odgovora
+	writer.Header().Set("Content-Type", "application/json")
+	// Slanje odgovora sa status kodom 200 i JSON tura
+	writer.WriteHeader(http.StatusOK)
+	writer.Write(jsonResponse)
 }

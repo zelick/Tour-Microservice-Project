@@ -36,6 +36,7 @@ func startTourServer(handler *handler.TourHandler) {
 	// za zahteve iz c# proj ka ovamo
 	router.HandleFunc("/tours/{id}", handler.Get).Methods("GET")
 	router.HandleFunc("/tours/create", handler.Create).Methods("POST")
+	router.HandleFunc("/tours/getByAuthor/{userId}", handler.GetByUserId).Methods("GET")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	println("Server starting")

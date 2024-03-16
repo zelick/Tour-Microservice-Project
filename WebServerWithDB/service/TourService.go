@@ -25,3 +25,11 @@ func (service *TourService) Create(tour *model.Tour) error {
 	}
 	return nil
 }
+
+func (service *TourService) FindByUserId(userID int) ([]model.Tour, error) {
+	tours, err := service.TourRepo.FindByUserId(userID)
+	if err != nil {
+		return nil, err
+	}
+	return tours, nil
+}
