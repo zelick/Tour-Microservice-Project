@@ -22,7 +22,8 @@ func initDB() *gorm.DB {
 		return nil
 	}
 
-	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}) // migracije da bismo napravili tabele
+	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{},
+		&model.TourCharacteristic{}) // migracije da bismo napravili tabele
 	//database.Exec("INSERT IGNORE INTO students VALUES ('aec7e123-233d-4a09-a289-75308ea5b7e6', 'Marko Markovic', 'Graficki dizajn')")
 	return database
 }
@@ -38,6 +39,7 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	router.HandleFunc("/tours/{id}", handler.Get).Methods("GET")
 	router.HandleFunc("/tours/create", handler.Create).Methods("POST")
 	router.HandleFunc("/tours/getByAuthor/{userId}", handler.GetByUserId).Methods("GET")
+	router.HandleFunc("/tours/setCaracteristics/{id}", handler.AddCharacteristics).Methods("PUT")
 
 	//tour point
 	router.HandleFunc("/tourPoint/create", tourPointHandler.Create).Methods("POST")

@@ -10,7 +10,7 @@ type TourService struct {
 	TourRepo *repo.TourRepository
 }
 
-func (service *TourService) FindTour(id string) (*model.Tour, error) {
+func (service *TourService) FindTour(id string) (*model.Tour, error) { //ovo se ne koristi
 	tour, err := service.TourRepo.FindById(id)
 	if err != nil {
 		return nil, fmt.Errorf(fmt.Sprintf("menu item with id %s not found", id))
@@ -62,4 +62,24 @@ func (service *TourService) PublishTour(tourId int) (interface{}, error) {
 	}
 
 	return nil, nil
+}
+
+func (service *TourService) SetTourCharacteristic(tourID int, distance, duration float64, transportType string) error {
+	tour, err := service.TourRepo.GetTourById(tourID)
+	if err != nil {
+		return fmt.Errorf("tour with ID %d not found", tourID)
+	}
+
+	characteristic := model.TourCharacteristic{
+		Distance:      distance,
+		Duration:      duration,
+		TransportType: transportType,
+	}
+
+	tour.TourCharacteristics = append(tour.TourCharacteristics, characteristic)
+
+	if err := service.TourRepo.UpdateTour(&tour); err != nil {
+		return fmt.Errorf("failed to update tour: %v", err)
+	}
+	return nil
 }

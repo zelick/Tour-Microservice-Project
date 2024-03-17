@@ -61,18 +61,21 @@ func (handler *TourHandler) GetByUserId(writer http.ResponseWriter, req *http.Re
 	// Konvertujemo userID iz stringa u integer
 	userID, err := strconv.Atoi(userIdStr)
 	if err != nil {
+		println(err.Error())
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	tours, err := handler.TourService.FindByUserId(userID)
 	if err != nil {
+		println(err.Error())
 		writer.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	jsonResponse, err := json.Marshal(tours)
 	if err != nil {
+		println(err.Error())
 		writer.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -82,4 +85,33 @@ func (handler *TourHandler) GetByUserId(writer http.ResponseWriter, req *http.Re
 	// Slanje odgovora sa status kodom 200 i JSON tura
 	writer.WriteHeader(http.StatusOK)
 	writer.Write(jsonResponse)
+}
+
+func (handler *TourHandler) AddCharacteristics(writer http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	tourIDStr, ok := vars["id"]
+	if !ok {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	tourID, err := strconv.Atoi(tourIDStr)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var characteristic model.TourCharacteristic
+	err = json.NewDecoder(req.Body).Decode(&characteristic)
+	if err != nil {
+		log.Printf("Error while parsing JSON: %s", err.Error())
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = handler.TourService.SetTourCharacteristic(tourID, characteristic.Distance, characteristic.Duration, characteristic.TransportType)
+	if err != nil {
+		log.Printf("Error while setting tour characteristics: %s", err.Error())
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	writer.WriteHeader(http.StatusOK)
 }
