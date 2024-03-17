@@ -27,7 +27,7 @@ func initDB() *gorm.DB {
 	return database
 }
 
-func startTourServer(handler *handler.TourHandler) {
+func startTourServer(handler *handler.TourHandler, tourPointHandler *handler.TourPointHandler) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	//router.HandleFunc("/students/{id}", handler.Get).Methods("GET")
@@ -37,6 +37,9 @@ func startTourServer(handler *handler.TourHandler) {
 	router.HandleFunc("/tours/{id}", handler.Get).Methods("GET")
 	router.HandleFunc("/tours/create", handler.Create).Methods("POST")
 	router.HandleFunc("/tours/getByAuthor/{userId}", handler.GetByUserId).Methods("GET")
+
+	//tour point
+	router.HandleFunc("/tourPoint/create", tourPointHandler.Create).Methods("POST")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	println("Server starting")
@@ -50,9 +53,13 @@ func main() {
 		print("FAILED TO CONNECT TO DB")
 		return
 	}
-	repo := &repo.TourRepository{DatabaseConnection: database}
-	service := &service.TourService{TourRepo: repo}
-	handler := &handler.TourHandler{TourService: service}
+	tourRepo := &repo.TourRepository{DatabaseConnection: database}
+	tourService := &service.TourService{TourRepo: tourRepo}
+	tourHandler := &handler.TourHandler{TourService: tourService}
 
-	startTourServer(handler)
+	tourPointRepo := &repo.TourPointRepository{DatabaseConnection: database}
+	tourPointService := &service.TourPointService{TourPointRepo: tourPointRepo}
+	tourPointHandler := &handler.TourPointHandler{TourPointService: tourPointService}
+
+	startTourServer(tourHandler, tourPointHandler)
 }

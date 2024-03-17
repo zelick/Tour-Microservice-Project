@@ -34,6 +34,6 @@ type Tour struct {
 	PublishedDateTime   time.Time            `json:"publishedDateTime"`
 	ArchivedDateTime    time.Time            `json:"archivedDateTime"`
 	TourPoints          []TourPoint          `json:"tourPoints" gorm:"foreignKey:TourID"`
-	TourCharacteristics []TourCharacteristic `json:"tourCharacteristics" gorm:"type:json"` //jer je value object
+	TourCharacteristics []TourCharacteristic `json:"tourCharacteristics" gorm:"type:jsonb"` //jer je value object
 	TourReviews         []TourReview         `json:"tourReviews" gorm:"foreignKey:TourID"`
 }
