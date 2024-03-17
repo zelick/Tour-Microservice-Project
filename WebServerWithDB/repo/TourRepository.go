@@ -56,16 +56,7 @@ func (repo *TourRepository) GetTourById(id int) (model.Tour, error) {
 	return tour, nil
 }
 
-/*func (repo *TourRepository) DeleteTour(id int) error {
-	dbResult := repo.DatabaseConnection.Delete(&model.Tour{}, id)
-	if dbResult.Error != nil {
-		return dbResult.Error
-	}
-	return nil
-}*/
-
 func (repo *TourRepository) DeleteTour(tourID int) error {
-	// Find the tour to delete
 	var tour model.Tour
 	result := repo.DatabaseConnection.Preload("TourPoints").Preload("TourReviews").First(&tour, tourID)
 	if result.Error != nil {
@@ -86,7 +77,6 @@ func (repo *TourRepository) DeleteTour(tourID int) error {
 		return err
 	}
 
-	// Delete the tour
 	err = repo.DatabaseConnection.Delete(&tour).Error
 	if err != nil {
 		println(err.Error())
