@@ -2,6 +2,8 @@ package repo
 
 import (
 	"database-example/model"
+	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -53,4 +55,34 @@ func (repo *TourRepository) GetTourById(id int) (model.Tour, error) {
 		return model.Tour{}, dbResult.Error
 	}
 	return tour, nil
+}
+
+func (repo *TourRepository) DeleteTour(tourID int) error {
+	var tour model.Tour
+	result := repo.DatabaseConnection.Preload("TourPoints").Preload("TourReviews").First(&tour, tourID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("tour with ID %d not found", tourID)
+		}
+		return result.Error
+	}
+
+	err := repo.DatabaseConnection.Where("tour_id = ?", tourID).Delete(&model.TourPoint{}).Error
+	if err != nil {
+		println(err.Error())
+		return err
+	}
+	err = repo.DatabaseConnection.Where("tour_id = ?", tourID).Delete(&model.TourReview{}).Error
+	if err != nil {
+		println(err.Error())
+		return err
+	}
+
+	err = repo.DatabaseConnection.Delete(&tour).Error
+	if err != nil {
+		println(err.Error())
+		return err
+	}
+
+	return nil
 }
