@@ -83,3 +83,48 @@ func (handler *TourHandler) GetByUserId(writer http.ResponseWriter, req *http.Re
 	writer.WriteHeader(http.StatusOK)
 	writer.Write(jsonResponse)
 }
+
+func (handler *TourHandler) Publish(writer http.ResponseWriter, req *http.Request) {
+	// Parsiranje tourId iz putanje
+	vars := mux.Vars(req)
+	tourIdStr, ok := vars["tourId"]
+	if !ok {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	tourId, err := strconv.Atoi(tourIdStr)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Poziv funkcije PublishTour iz TourService
+	_, err = handler.TourService.PublishTour(tourId)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Uspesan odgovor ako je sve proslo kako treba
+	writer.WriteHeader(http.StatusOK)
+}
+
+func (handler *TourHandler) Archive(writer http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	tourIdStr, ok := vars["tourId"]
+	if !ok {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	tourId, err := strconv.Atoi(tourIdStr)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	_, err = handler.TourService.ArchiveTour(tourId)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	writer.WriteHeader(http.StatusOK)
+}

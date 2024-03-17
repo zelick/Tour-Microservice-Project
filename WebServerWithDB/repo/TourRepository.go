@@ -44,3 +44,12 @@ func (repo *TourRepository) UpdateTour(tour *model.Tour) error {
 	}
 	return nil
 }
+
+func (repo *TourRepository) GetTourById(id int) (model.Tour, error) {
+	var tour model.Tour
+	dbResult := repo.DatabaseConnection.First(&tour, id)
+	if dbResult.Error != nil {
+		return model.Tour{}, dbResult.Error
+	}
+	return tour, nil
+}
