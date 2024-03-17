@@ -128,3 +128,23 @@ func (handler *TourHandler) Archive(writer http.ResponseWriter, req *http.Reques
 	}
 	writer.WriteHeader(http.StatusOK)
 }
+
+func (handler *TourHandler) Delete(writer http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	tourIdStr, ok := vars["tourId"]
+	if !ok {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	tourId, err := strconv.Atoi(tourIdStr)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = handler.TourService.DeleteTour(tourId)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	writer.WriteHeader(http.StatusOK)
+}

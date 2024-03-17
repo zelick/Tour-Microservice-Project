@@ -77,3 +77,11 @@ func (service *TourService) ArchiveTour(tourId int) (interface{}, error) {
 
 	return nil, nil
 }
+
+func (service *TourService) DeleteTour(tourId int) error {
+	err := service.TourRepo.DeleteTour(tourId)
+	if err != nil {
+		return err
+	}
+	return nil
+}

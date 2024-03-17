@@ -39,6 +39,7 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	router.HandleFunc("/tours/getByAuthor/{userId}", handler.GetByUserId).Methods("GET")
 	router.HandleFunc("/tours/publish/{tourId}", handler.Publish).Methods("PUT")
 	router.HandleFunc("/tours/archive/{tourId}", handler.Archive).Methods("PUT")
+	router.HandleFunc("/tours/delete/{tourId}", handler.Delete).Methods("DELETE")
 
 	// tour objects
 	router.HandleFunc("/tourObjects/{id}", tourObjectHandler.Get).Methods("GET")
