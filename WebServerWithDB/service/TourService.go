@@ -33,3 +33,33 @@ func (service *TourService) FindByUserId(userID int) ([]model.Tour, error) {
 	}
 	return tours, nil
 }
+
+func (service *TourService) PublishTour(tourId int) (interface{}, error) {
+	tour, err := service.TourRepo.GetTourById(tourId)
+	if err != nil {
+		return nil, err
+	}
+	if tour.Name == "" || tour.Description == "" {
+		return nil, fmt.Errorf("Tour must have all basic data set.")
+	}
+	if len(tour.TourPoints) < 2 {
+		return nil, fmt.Errorf("Tour must have at least two key points.")
+	}
+	validTimeDefined := false
+	for _, tc := range tour.TourCharacteristics {
+		if tc.Duration > 0 {
+			validTimeDefined = true
+			break
+		}
+	}
+	if !validTimeDefined {
+		return nil, fmt.Errorf("At least one valid tour time must be defined.")
+	}
+	tour.Status = "Published"
+	err = service.TourRepo.UpdateTour(&tour)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}

@@ -36,3 +36,11 @@ func (repo *TourRepository) FindByUserId(userID int) ([]model.Tour, error) {
 	}
 	return tours, nil
 }
+
+func (repo *TourRepository) UpdateTour(tour *model.Tour) error {
+	dbResult := repo.DatabaseConnection.Save(tour)
+	if dbResult.Error != nil {
+		return dbResult.Error
+	}
+	return nil
+}

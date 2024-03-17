@@ -22,24 +22,29 @@ func initDB() *gorm.DB {
 		return nil
 	}
 
-	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}) // migracije da bismo napravili tabele
+	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}) // migracije da bismo napravili tabele
 	//database.Exec("INSERT IGNORE INTO students VALUES ('aec7e123-233d-4a09-a289-75308ea5b7e6', 'Marko Markovic', 'Graficki dizajn')")
 	return database
 }
 
-func startTourServer(handler *handler.TourHandler, tourPointHandler *handler.TourPointHandler) {
+func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.TourObjectHandler, tourPointHandler *handler.TourPointHandler) {
+
 	router := mux.NewRouter().StrictSlash(true)
 
 	//router.HandleFunc("/students/{id}", handler.Get).Methods("GET")
 	//router.HandleFunc("/students", handler.Create).Methods("POST")
 
-	// za zahteve iz c# proj ka ovamo
+	// tours
 	router.HandleFunc("/tours/{id}", handler.Get).Methods("GET")
 	router.HandleFunc("/tours/create", handler.Create).Methods("POST")
 	router.HandleFunc("/tours/getByAuthor/{userId}", handler.GetByUserId).Methods("GET")
 
 	//tour point
 	router.HandleFunc("/tourPoint/create", tourPointHandler.Create).Methods("POST")
+
+	// tour objects
+	router.HandleFunc("/tourObjects/{id}", tourObjectHandler.Get).Methods("GET")
+	router.HandleFunc("/tourObjects/create", tourObjectHandler.Create).Methods("POST")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	println("Server starting")
@@ -61,5 +66,9 @@ func main() {
 	tourPointService := &service.TourPointService{TourPointRepo: tourPointRepo}
 	tourPointHandler := &handler.TourPointHandler{TourPointService: tourPointService}
 
-	startTourServer(tourHandler, tourPointHandler)
+	tourObjectRepo := &repo.TourObjectRepository{DatabaseConnection: database}
+	tourObjectService := &service.TourObjectService{TourObjectRepo: tourObjectRepo}
+	tourObjectHandler := &handler.TourObjectHandler{TourObjectService: tourObjectService}
+
+	startTourServer(tourHandler, tourObjectHandler, tourPointHandler)
 }
