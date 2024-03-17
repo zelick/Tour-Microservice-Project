@@ -35,7 +35,7 @@ func (service *TourService) FindByUserId(userID int) ([]model.Tour, error) {
 }
 
 func (service *TourService) PublishTour(tourId int) (interface{}, error) {
-	tour, err := service.TourRepo.FindById(tourId)
+	tour, err := service.TourRepo.GetTourById(tourId)
 	if err != nil {
 		return nil, err
 	}
