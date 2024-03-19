@@ -70,14 +70,21 @@ func (service *TourService) SetTourCharacteristic(tourID int, distance, duration
 		return fmt.Errorf("tour with ID %d not found", tourID)
 	}
 
-	characteristic := model.TourCharacteristic{
+	newCharacteristic := model.TourCharacteristic{
 		Distance:      distance,
 		Duration:      duration,
 		TransportType: transportType,
 	}
 
-	tour.TourCharacteristics = append(tour.TourCharacteristics, characteristic)
+	// Provera da li je TourCharacteristicsSlice prazan i inicijalizacija ako jeste
+	if tour.TourCharacteristics == nil {
+		tour.TourCharacteristics = make(model.TourCharacteristicsSlice, 0)
+	}
 
+	// Dodavanje novog JSONB objekta u niz
+	tour.TourCharacteristics = append(tour.TourCharacteristics, newCharacteristic)
+
+	// Ažuriranje tura u repozitorijumu
 	if err := service.TourRepo.UpdateTour(&tour); err != nil {
 		return fmt.Errorf("failed to update tour: %v", err)
 	}
