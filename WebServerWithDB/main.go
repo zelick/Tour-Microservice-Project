@@ -22,12 +22,12 @@ func initDB() *gorm.DB {
 		return nil
 	}
 
-	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}) // migracije da bismo napravili tabele
+	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}, &model.TourPointRequest{}) // migracije da bismo napravili tabele
 	//database.Exec("INSERT IGNORE INTO students VALUES ('aec7e123-233d-4a09-a289-75308ea5b7e6', 'Marko Markovic', 'Graficki dizajn')")
 	return database
 }
 
-func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.TourObjectHandler, tourPointHandler *handler.TourPointHandler) {
+func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.TourObjectHandler, tourPointHandler *handler.TourPointHandler, tourPointRequestHandler *handler.TourPointRequestHandler) {
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -49,6 +49,11 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	// tour objects
 	router.HandleFunc("/tourObjects/{id}", tourObjectHandler.Get).Methods("GET")
 	router.HandleFunc("/tourObjects/create", tourObjectHandler.Create).Methods("POST")
+
+	// tour point requests
+	router.HandleFunc("/tourPointRequest/create", tourPointRequestHandler.Create).Methods("POST")
+	router.HandleFunc("/tourPointRequest/accept/{tourPointRequestId}", tourPointRequestHandler.AcceptRequest).Methods("PUT")
+	router.HandleFunc("/tourPointRequest/decline/{tourPointRequestId}", tourPointRequestHandler.DeclineRequest).Methods("PUT")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	println("Server starting")
@@ -74,5 +79,9 @@ func main() {
 	tourObjectService := &service.TourObjectService{TourObjectRepo: tourObjectRepo}
 	tourObjectHandler := &handler.TourObjectHandler{TourObjectService: tourObjectService}
 
-	startTourServer(tourHandler, tourObjectHandler, tourPointHandler)
+	tourPointRequestRepo := &repo.TourPointRequestRepository{DatabaseConnection: database}
+	tourPointRequestService := &service.TourPointRequestService{TourPointRequestRepo: tourPointRequestRepo}
+	tourPointRequestHandler := &handler.TourPointRequestHandler{TourPointRequestService: tourPointRequestService}
+
+	startTourServer(tourHandler, tourObjectHandler, tourPointHandler, tourPointRequestHandler)
 }
