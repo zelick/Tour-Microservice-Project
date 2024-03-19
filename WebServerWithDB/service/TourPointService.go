@@ -16,3 +16,11 @@ func (service *TourPointService) Create(tourPoint *model.TourPoint) error {
 	}
 	return nil
 }
+
+func (service *TourPointService) GetAll() ([]model.TourPoint, error) {
+	tourPoints, err := service.TourPointRepo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return tourPoints, nil
+}

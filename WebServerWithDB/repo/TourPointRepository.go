@@ -18,3 +18,12 @@ func (repo *TourPointRepository) Create(tourPoint *model.TourPoint) error {
 	println("Rows affected: ", dbResult.RowsAffected)
 	return nil
 }
+
+func (repo *TourPointRepository) GetAll() ([]model.TourPoint, error) {
+	var tourPoints []model.TourPoint
+	dbResult := repo.DatabaseConnection.Find(&tourPoints)
+	if dbResult.Error != nil {
+		return nil, dbResult.Error
+	}
+	return tourPoints, nil
+}
