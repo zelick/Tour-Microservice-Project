@@ -27,3 +27,12 @@ func (repo *TourPointRepository) GetAll() ([]model.TourPoint, error) {
 	}
 	return tourPoints, nil
 }
+
+func (repo *TourPointRepository) FindById(id int) (model.TourPoint, error) {
+	tourPoint := model.TourPoint{}
+	dbResult := repo.DatabaseConnection.First(&tourPoint, id)
+	if dbResult.Error != nil {
+		return tourPoint, dbResult.Error
+	}
+	return tourPoint, nil
+}

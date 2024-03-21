@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type TourPointHandler struct {
@@ -45,6 +48,42 @@ func (handler *TourPointHandler) GetAll(writer http.ResponseWriter, req *http.Re
 	if err := json.NewEncoder(writer).Encode(tourPoints); err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(writer, "Failed to encode tour points to JSON: %v", err)
+		return
+	}
+}
+
+func (handler *TourPointHandler) GetById(writer http.ResponseWriter, req *http.Request) {
+	// Izvlačenje ID-a tačke ture iz putanje
+	vars := mux.Vars(req)
+	id, ok := vars["id"]
+	if !ok {
+		writer.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(writer, "ID parameter is missing")
+		return
+	}
+
+	// Konvertovanje ID-a u tip int
+	tourPointId, err := strconv.Atoi(id)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(writer, "Invalid tour point ID: %v", err)
+		return
+	}
+
+	// Dobijanje tačke ture po ID-u
+	tourPoint, err := handler.TourPointService.FindById(tourPointId)
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(writer, "Tour point not found: %v", err)
+		return
+	}
+
+	// Slanje odgovora sa podacima o tački ture
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(writer).Encode(tourPoint); err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(writer, "Failed to encode tour point to JSON: %v", err)
 		return
 	}
 }

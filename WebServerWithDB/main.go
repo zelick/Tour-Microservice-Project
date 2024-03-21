@@ -22,12 +22,13 @@ func initDB() *gorm.DB {
 		return nil
 	}
 
-	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}, &model.TourPointRequest{}) // migracije da bismo napravili tabele
+	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}, &model.TourPointRequest{}, &model.PublicTourPoint{}) // migracije da bismo napravili tabele
 	//database.Exec("INSERT IGNORE INTO students VALUES ('aec7e123-233d-4a09-a289-75308ea5b7e6', 'Marko Markovic', 'Graficki dizajn')")
 	return database
 }
 
-func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.TourObjectHandler, tourPointHandler *handler.TourPointHandler, tourPointRequestHandler *handler.TourPointRequestHandler) {
+func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.TourObjectHandler, tourPointHandler *handler.TourPointHandler,
+	tourPointRequestHandler *handler.TourPointRequestHandler, publicTourPointHandler *handler.PublicTourPointHandler) {
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -46,6 +47,7 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	//tour point
 	router.HandleFunc("/tourPoint/create", tourPointHandler.Create).Methods("POST")
 	router.HandleFunc("/tourPoint/getAll", tourPointHandler.GetAll).Methods("GET")
+	router.HandleFunc("/tourPoint/getById/{id}", tourPointHandler.GetById).Methods("GET")
 
 	// tour objects
 	router.HandleFunc("/tourObjects/{id}", tourObjectHandler.Get).Methods("GET")
@@ -55,6 +57,9 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	router.HandleFunc("/tourPointRequest/create", tourPointRequestHandler.Create).Methods("POST")
 	router.HandleFunc("/tourPointRequest/accept/{tourPointRequestId}", tourPointRequestHandler.AcceptRequest).Methods("PUT")
 	router.HandleFunc("/tourPointRequest/decline/{tourPointRequestId}", tourPointRequestHandler.DeclineRequest).Methods("PUT")
+
+	//public tour point
+	router.HandleFunc("/publicTourPoint/setPublicTourPoint/{tourPointId}", publicTourPointHandler.CreateFromTourPointId).Methods("GET") //izmena po potrebi, poziv stakholders modula
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	println("Server starting")
@@ -68,21 +73,34 @@ func main() {
 		print("FAILED TO CONNECT TO DB")
 		return
 	}
+
+	//tour
 	tourRepo := &repo.TourRepository{DatabaseConnection: database}
 	tourService := &service.TourService{TourRepo: tourRepo}
 	tourHandler := &handler.TourHandler{TourService: tourService}
 
+	//tourPoint
 	tourPointRepo := &repo.TourPointRepository{DatabaseConnection: database}
 	tourPointService := &service.TourPointService{TourPointRepo: tourPointRepo}
 	tourPointHandler := &handler.TourPointHandler{TourPointService: tourPointService}
 
+	//tourObject
 	tourObjectRepo := &repo.TourObjectRepository{DatabaseConnection: database}
 	tourObjectService := &service.TourObjectService{TourObjectRepo: tourObjectRepo}
 	tourObjectHandler := &handler.TourObjectHandler{TourObjectService: tourObjectService}
 
+	//tourPointRequest - obrisati?
 	tourPointRequestRepo := &repo.TourPointRequestRepository{DatabaseConnection: database}
 	tourPointRequestService := &service.TourPointRequestService{TourPointRequestRepo: tourPointRequestRepo}
 	tourPointRequestHandler := &handler.TourPointRequestHandler{TourPointRequestService: tourPointRequestService}
 
-	startTourServer(tourHandler, tourObjectHandler, tourPointHandler, tourPointRequestHandler)
+	//publicTourPoint
+	publicTourPointRepo := &repo.PublicTourPointRepository{DatabaseConnection: database}
+	publicTourPointService := &service.PublicTourPointService{PublicTourPointRepo: publicTourPointRepo}
+	publicTourPointHandler := &handler.PublicTourPointHandler{
+		PublicTourPointService: publicTourPointService,
+		TourPointService:       tourPointService,
+	}
+
+	startTourServer(tourHandler, tourObjectHandler, tourPointHandler, tourPointRequestHandler, publicTourPointHandler)
 }

@@ -24,3 +24,11 @@ func (service *TourPointService) GetAll() ([]model.TourPoint, error) {
 	}
 	return tourPoints, nil
 }
+
+func (service *TourPointService) FindById(id int) (model.TourPoint, error) {
+	tourPoint, err := service.TourPointRepo.FindById(id)
+	if err != nil {
+		return model.TourPoint{}, err
+	}
+	return tourPoint, nil
+}
