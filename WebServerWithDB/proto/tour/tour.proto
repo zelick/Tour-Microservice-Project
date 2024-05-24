@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+option go_package = "proto/tour";
+import "google/protobuf/timestamp.proto";
+
+service Tour {
+    rpc Create(TourDto) returns (TourDto) {}
+}
+
+message TourDto {
+    int64 id = 1; 
+    string name = 2;
+    google.protobuf.Timestamp publishedDateTime = 3;
+    google.protobuf.Timestamp archivedDateTime = 4;
+    string description = 5;
+    string difficultyLevel = 6;
+    repeated string tags = 7;
+    int32 price = 8;
+    string status = 9;
+    int64 userId = 10;
+    repeated TourPointDto tourPoints = 11;
+    repeated TourCharacteristicDto tourCharacteristics = 12;
+    repeated TourReviewDto tourReviews = 13;
+}
+
+message TourPointDto {
+    int64 id = 1;
+    int64 tourId = 2;
+    string name = 3;
+    string description = 4;
+    double latitude = 5;
+    double longitude = 6;
+    string imageUrl = 7;
+    string secret = 8;
+}
+
+message TourCharacteristicDto {
+    double distance = 1;
+    double duration = 2;
+    string transportType = 3;
+}
+
+message TourReviewDto {
+    int64 id = 1;
+    double grade = 2;
+    string comment = 3;
+    int64 touristId = 4;
+    google.protobuf.Timestamp attendanceDate = 5;
+    google.protobuf.Timestamp reviewDate = 6;
+    repeated string images = 7;
+    int64 tourId = 8;
+}
+
+message UserIdRequest {
+    int64 userId = 1;
+}
+
+message TourIdRequest {
+    int64 id = 1;
+}
+
+message Response {
+    bool success = 1;
+    string error = 2;
+}
+
+message TourListResponse {
+    repeated TourDto tours = 1;
+}
+

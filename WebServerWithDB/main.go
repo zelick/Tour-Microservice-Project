@@ -1,29 +1,32 @@
 package main
 
 import (
+	"context"
 	"database-example/handler"
 	"database-example/model"
+	"database-example/proto/tour"
 	"database-example/repo"
 	"database-example/service"
 	"log"
+	"net"
 	"net/http"
 
-	"gorm.io/driver/postgres"
-
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func initDB() *gorm.DB {
-	dsn := "user=postgres password=super dbname=explorer host=database port=5432 sslmode=disable search_path=tours" // podesavanje baze
+	dsn := "user=postgres password=super dbname=explorer host=database port=5432 sslmode=disable search_path=tours"
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		print(err)
 		return nil
 	}
 
-	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}, &model.PublicTourPoint{}) // migracije da bismo napravili tabele
-	//database.Exec("INSERT IGNORE INTO students VALUES ('aec7e123-233d-4a09-a289-75308ea5b7e6', 'Marko Markovic', 'Graficki dizajn')")  //, &model.TourPointRequest{}
+	database.AutoMigrate(&model.Tour{}, &model.TourPoint{}, &model.TourReview{}, &model.TourObject{}, &model.PublicTourPoint{})
 	return database
 }
 
@@ -32,10 +35,6 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 
 	router := mux.NewRouter().StrictSlash(true)
 
-	//router.HandleFunc("/students/{id}", handler.Get).Methods("GET")
-	//router.HandleFunc("/students", handler.Create).Methods("POST")
-
-	// tours
 	router.HandleFunc("/tours/{id}", handler.Get).Methods("GET")
 	router.HandleFunc("/tours/create", handler.Create).Methods("POST")
 	router.HandleFunc("/tours/getByAuthor/{userId}", handler.GetByUserId).Methods("GET")
@@ -44,63 +43,94 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	router.HandleFunc("/tours/archive/{tourId}", handler.Archive).Methods("PUT")
 	router.HandleFunc("/tours/delete/{tourId}", handler.Delete).Methods("DELETE")
 
-	//tour point
 	router.HandleFunc("/tourPoint/create", tourPointHandler.Create).Methods("POST")
 	router.HandleFunc("/tourPoint/getAll", tourPointHandler.GetAll).Methods("GET")
 	router.HandleFunc("/tourPoint/getById/{id}", tourPointHandler.GetById).Methods("GET")
 
-	// tour objects
 	router.HandleFunc("/tourObjects/{id}", tourObjectHandler.Get).Methods("GET")
 	router.HandleFunc("/tourObjects/create", tourObjectHandler.Create).Methods("POST")
 
-	// tour point requests
 	router.HandleFunc("/tourPointRequest/create", tourPointRequestHandler.Create).Methods("POST")
 	router.HandleFunc("/tourPointRequest/accept/{tourPointRequestId}", tourPointRequestHandler.AcceptRequest).Methods("PUT")
 	router.HandleFunc("/tourPointRequest/decline/{tourPointRequestId}", tourPointRequestHandler.DeclineRequest).Methods("PUT")
 
-	//public tour point
-	router.HandleFunc("/publicTourPoint/setPublicTourPoint/{tourPointId}", publicTourPointHandler.CreateFromTourPointId).Methods("GET") //izmena po potrebi, poziv stakholders modula
+	router.HandleFunc("/publicTourPoint/setPublicTourPoint/{tourPointId}", publicTourPointHandler.CreateFromTourPointId).Methods("GET")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
-	println("Server starting")
-	//log.Fatal(http.ListenAndServe(":88", router))
+	log.Println("Server starting on port 3000")
+
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
 func main() {
 	database := initDB()
 	if database == nil {
-		print("FAILED TO CONNECT TO DB")
+		log.Fatal("Failed to connect to the database")
 		return
 	}
 
-	//tour
 	tourRepo := &repo.TourRepository{DatabaseConnection: database}
 	tourService := &service.TourService{TourRepo: tourRepo}
-	tourHandler := &handler.TourHandler{TourService: tourService}
 
-	//tourPoint
-	tourPointRepo := &repo.TourPointRepository{DatabaseConnection: database}
-	tourPointService := &service.TourPointService{TourPointRepo: tourPointRepo}
-	tourPointHandler := &handler.TourPointHandler{TourPointService: tourPointService}
-
-	//tourObject
-	tourObjectRepo := &repo.TourObjectRepository{DatabaseConnection: database}
-	tourObjectService := &service.TourObjectService{TourObjectRepo: tourObjectRepo}
-	tourObjectHandler := &handler.TourObjectHandler{TourObjectService: tourObjectService}
-
-	//tourPointRequest - obrisati?
-	tourPointRequestRepo := &repo.TourPointRequestRepository{DatabaseConnection: database}
-	tourPointRequestService := &service.TourPointRequestService{TourPointRequestRepo: tourPointRequestRepo}
-	tourPointRequestHandler := &handler.TourPointRequestHandler{TourPointRequestService: tourPointRequestService}
-
-	//publicTourPoint
-	publicTourPointRepo := &repo.PublicTourPointRepository{DatabaseConnection: database}
-	publicTourPointService := &service.PublicTourPointService{PublicTourPointRepo: publicTourPointRepo}
-	publicTourPointHandler := &handler.PublicTourPointHandler{
-		PublicTourPointService: publicTourPointService,
-		TourPointService:       tourPointService,
+	lis, err := net.Listen("tcp", "tours:3000")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
 
-	startTourServer(tourHandler, tourObjectHandler, tourPointHandler, tourPointRequestHandler, publicTourPointHandler)
+	grpcServer := grpc.NewServer()
+
+	tour.RegisterTourServer(grpcServer, &Server{TourService: tourService})
+
+	reflection.Register(grpcServer)
+	log.Println("gRPC server starting on port 3000")
+	grpcServer.Serve(lis)
+}
+
+type Server struct {
+	tour.UnimplementedTourServer
+	TourService *service.TourService
+}
+
+func (s *Server) Create(ctx context.Context, request *tour.TourDto) (*tour.TourDto, error) {
+	// Map TourCharacteristicDto to model.TourCharacteristic
+	println("Usao je ovde CREATE TOURS")
+	var characteristics model.TourCharacteristicsSlice
+	for _, c := range request.TourCharacteristics {
+		characteristics = append(characteristics, model.TourCharacteristic{
+			Distance:      c.Distance,
+			Duration:      c.Duration,
+			TransportType: c.TransportType,
+		})
+	}
+
+	t := model.Tour{
+		Name:                request.Name,
+		Description:         request.Description,
+		UserID:              int(request.UserId),
+		DifficultyLevel:     request.DifficultyLevel,
+		Tags:                request.Tags,
+		Status:              request.Status,
+		Price:               int(request.Price),
+		PublishedDateTime:   request.PublishedDateTime.AsTime(),
+		ArchivedDateTime:    request.ArchivedDateTime.AsTime(),
+		TourCharacteristics: characteristics,
+	}
+
+	err := s.TourService.Create(&t)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &tour.TourDto{
+		Id:              int64(t.ID),
+		Name:            t.Name,
+		Description:     t.Description,
+		DifficultyLevel: t.DifficultyLevel,
+		Tags:            t.Tags,
+		Status:          t.Status,
+		Price:           int32(t.Price),
+		UserId:          int64(t.UserID),
+	}
+
+	return response, nil
 }
