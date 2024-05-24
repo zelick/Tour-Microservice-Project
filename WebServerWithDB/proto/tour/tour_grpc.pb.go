@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Tour_Create_FullMethodName = "/Tour/Create"
+	Tour_Create_FullMethodName      = "/Tour/Create"
+	Tour_GetByUserId_FullMethodName = "/Tour/GetByUserId"
 )
 
 // TourClient is the client API for Tour service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TourClient interface {
 	Create(ctx context.Context, in *TourDto, opts ...grpc.CallOption) (*TourDto, error)
+	GetByUserId(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TourListResponse, error)
 }
 
 type tourClient struct {
@@ -46,11 +48,21 @@ func (c *tourClient) Create(ctx context.Context, in *TourDto, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *tourClient) GetByUserId(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TourListResponse, error) {
+	out := new(TourListResponse)
+	err := c.cc.Invoke(ctx, Tour_GetByUserId_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TourServer is the server API for Tour service.
 // All implementations must embed UnimplementedTourServer
 // for forward compatibility
 type TourServer interface {
 	Create(context.Context, *TourDto) (*TourDto, error)
+	GetByUserId(context.Context, *PageRequest) (*TourListResponse, error)
 	mustEmbedUnimplementedTourServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedTourServer struct {
 
 func (UnimplementedTourServer) Create(context.Context, *TourDto) (*TourDto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedTourServer) GetByUserId(context.Context, *PageRequest) (*TourListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByUserId not implemented")
 }
 func (UnimplementedTourServer) mustEmbedUnimplementedTourServer() {}
 
@@ -92,6 +107,24 @@ func _Tour_Create_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Tour_GetByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TourServer).GetByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Tour_GetByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TourServer).GetByUserId(ctx, req.(*PageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Tour_ServiceDesc is the grpc.ServiceDesc for Tour service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var Tour_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _Tour_Create_Handler,
+		},
+		{
+			MethodName: "GetByUserId",
+			Handler:    _Tour_GetByUserId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

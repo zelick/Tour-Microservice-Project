@@ -35,7 +35,7 @@ type TourDto struct {
 	Tags                []string                 `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
 	Price               int32                    `protobuf:"varint,8,opt,name=price,proto3" json:"price,omitempty"`
 	Status              string                   `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
-	UserId              int64                    `protobuf:"varint,10,opt,name=userId,proto3" json:"userId,omitempty"`
+	UserId              int64                    `protobuf:"varint,10,opt,name=UserId,proto3" json:"UserId,omitempty"`
 	TourPoints          []*TourPointDto          `protobuf:"bytes,11,rep,name=tourPoints,proto3" json:"tourPoints,omitempty"`
 	TourCharacteristics []*TourCharacteristicDto `protobuf:"bytes,12,rep,name=tourCharacteristics,proto3" json:"tourCharacteristics,omitempty"`
 	TourReviews         []*TourReviewDto         `protobuf:"bytes,13,rep,name=tourReviews,proto3" json:"tourReviews,omitempty"`
@@ -433,6 +433,69 @@ func (x *TourReviewDto) GetTourId() int64 {
 	return 0
 }
 
+type PageRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId   int64 `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Page     int32 `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize int32 `protobuf:"varint,3,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
+}
+
+func (x *PageRequest) Reset() {
+	*x = PageRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_tour_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageRequest) ProtoMessage() {}
+
+func (x *PageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tour_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageRequest.ProtoReflect.Descriptor instead.
+func (*PageRequest) Descriptor() ([]byte, []int) {
+	return file_tour_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PageRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *PageRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *PageRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
 type UserIdRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -444,7 +507,7 @@ type UserIdRequest struct {
 func (x *UserIdRequest) Reset() {
 	*x = UserIdRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tour_proto_msgTypes[4]
+		mi := &file_tour_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -457,7 +520,7 @@ func (x *UserIdRequest) String() string {
 func (*UserIdRequest) ProtoMessage() {}
 
 func (x *UserIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tour_proto_msgTypes[4]
+	mi := &file_tour_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -470,7 +533,7 @@ func (x *UserIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserIdRequest.ProtoReflect.Descriptor instead.
 func (*UserIdRequest) Descriptor() ([]byte, []int) {
-	return file_tour_proto_rawDescGZIP(), []int{4}
+	return file_tour_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UserIdRequest) GetUserId() int64 {
@@ -491,7 +554,7 @@ type TourIdRequest struct {
 func (x *TourIdRequest) Reset() {
 	*x = TourIdRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tour_proto_msgTypes[5]
+		mi := &file_tour_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -504,7 +567,7 @@ func (x *TourIdRequest) String() string {
 func (*TourIdRequest) ProtoMessage() {}
 
 func (x *TourIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tour_proto_msgTypes[5]
+	mi := &file_tour_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -517,7 +580,7 @@ func (x *TourIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TourIdRequest.ProtoReflect.Descriptor instead.
 func (*TourIdRequest) Descriptor() ([]byte, []int) {
-	return file_tour_proto_rawDescGZIP(), []int{5}
+	return file_tour_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *TourIdRequest) GetId() int64 {
@@ -539,7 +602,7 @@ type Response struct {
 func (x *Response) Reset() {
 	*x = Response{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tour_proto_msgTypes[6]
+		mi := &file_tour_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -552,7 +615,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_tour_proto_msgTypes[6]
+	mi := &file_tour_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -565,7 +628,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_tour_proto_rawDescGZIP(), []int{6}
+	return file_tour_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Response) GetSuccess() bool {
@@ -587,13 +650,14 @@ type TourListResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Tours []*TourDto `protobuf:"bytes,1,rep,name=tours,proto3" json:"tours,omitempty"`
+	Results    []*TourDto `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	TotalCount int32      `protobuf:"varint,2,opt,name=totalCount,proto3" json:"totalCount,omitempty"`
 }
 
 func (x *TourListResponse) Reset() {
 	*x = TourListResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tour_proto_msgTypes[7]
+		mi := &file_tour_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -606,7 +670,7 @@ func (x *TourListResponse) String() string {
 func (*TourListResponse) ProtoMessage() {}
 
 func (x *TourListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_tour_proto_msgTypes[7]
+	mi := &file_tour_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -619,14 +683,21 @@ func (x *TourListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TourListResponse.ProtoReflect.Descriptor instead.
 func (*TourListResponse) Descriptor() ([]byte, []int) {
-	return file_tour_proto_rawDescGZIP(), []int{7}
+	return file_tour_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *TourListResponse) GetTours() []*TourDto {
+func (x *TourListResponse) GetResults() []*TourDto {
 	if x != nil {
-		return x.Tours
+		return x.Results
 	}
 	return nil
+}
+
+func (x *TourListResponse) GetTotalCount() int32 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
 }
 
 var File_tour_proto protoreflect.FileDescriptor
@@ -656,7 +727,7 @@ var file_tour_proto_rawDesc = []byte{
 	0x14, 0x0a, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05,
 	0x70, 0x72, 0x69, 0x63, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18,
 	0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x0a,
-	0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75,
+	0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x55,
 	0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x2d, 0x0a, 0x0a, 0x74, 0x6f, 0x75, 0x72, 0x50, 0x6f, 0x69,
 	0x6e, 0x74, 0x73, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x54, 0x6f, 0x75, 0x72,
 	0x50, 0x6f, 0x69, 0x6e, 0x74, 0x44, 0x74, 0x6f, 0x52, 0x0a, 0x74, 0x6f, 0x75, 0x72, 0x50, 0x6f,
@@ -707,22 +778,33 @@ var file_tour_proto_rawDesc = []byte{
 	0x44, 0x61, 0x74, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x73, 0x18, 0x07,
 	0x20, 0x03, 0x28, 0x09, 0x52, 0x06, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x73, 0x12, 0x16, 0x0a, 0x06,
 	0x74, 0x6f, 0x75, 0x72, 0x49, 0x64, 0x18, 0x08, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x74, 0x6f,
-	0x75, 0x72, 0x49, 0x64, 0x22, 0x27, 0x0a, 0x0d, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x1f, 0x0a,
-	0x0d, 0x54, 0x6f, 0x75, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e,
-	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x3a,
-	0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75,
-	0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63,
-	0x63, 0x65, 0x73, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x22, 0x32, 0x0a, 0x10, 0x54, 0x6f,
-	0x75, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1e,
-	0x0a, 0x05, 0x74, 0x6f, 0x75, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x08, 0x2e,
-	0x54, 0x6f, 0x75, 0x72, 0x44, 0x74, 0x6f, 0x52, 0x05, 0x74, 0x6f, 0x75, 0x72, 0x73, 0x32, 0x26,
-	0x0a, 0x04, 0x54, 0x6f, 0x75, 0x72, 0x12, 0x1e, 0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
-	0x12, 0x08, 0x2e, 0x54, 0x6f, 0x75, 0x72, 0x44, 0x74, 0x6f, 0x1a, 0x08, 0x2e, 0x54, 0x6f, 0x75,
-	0x72, 0x44, 0x74, 0x6f, 0x22, 0x00, 0x42, 0x0c, 0x5a, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f,
-	0x74, 0x6f, 0x75, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x75, 0x72, 0x49, 0x64, 0x22, 0x55, 0x0a, 0x0b, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x70,
+	0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12,
+	0x1a, 0x0a, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x22, 0x27, 0x0a, 0x0d, 0x55,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06,
+	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73,
+	0x65, 0x72, 0x49, 0x64, 0x22, 0x1f, 0x0a, 0x0d, 0x54, 0x6f, 0x75, 0x72, 0x49, 0x64, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x3a, 0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x65,
+	0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f,
+	0x72, 0x22, 0x56, 0x0a, 0x10, 0x54, 0x6f, 0x75, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x22, 0x0a, 0x07, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x73,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x54, 0x6f, 0x75, 0x72, 0x44, 0x74, 0x6f,
+	0x52, 0x07, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x73, 0x12, 0x1e, 0x0a, 0x0a, 0x74, 0x6f, 0x74,
+	0x61, 0x6c, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0a, 0x74,
+	0x6f, 0x74, 0x61, 0x6c, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x32, 0x58, 0x0a, 0x04, 0x54, 0x6f, 0x75,
+	0x72, 0x12, 0x1e, 0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x08, 0x2e, 0x54, 0x6f,
+	0x75, 0x72, 0x44, 0x74, 0x6f, 0x1a, 0x08, 0x2e, 0x54, 0x6f, 0x75, 0x72, 0x44, 0x74, 0x6f, 0x22,
+	0x00, 0x12, 0x30, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x42, 0x79, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64,
+	0x12, 0x0c, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11,
+	0x2e, 0x54, 0x6f, 0x75, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x42, 0x0c, 0x5a, 0x0a, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x74, 0x6f, 0x75,
+	0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -737,34 +819,37 @@ func file_tour_proto_rawDescGZIP() []byte {
 	return file_tour_proto_rawDescData
 }
 
-var file_tour_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_tour_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_tour_proto_goTypes = []interface{}{
 	(*TourDto)(nil),               // 0: TourDto
 	(*TourPointDto)(nil),          // 1: TourPointDto
 	(*TourCharacteristicDto)(nil), // 2: TourCharacteristicDto
 	(*TourReviewDto)(nil),         // 3: TourReviewDto
-	(*UserIdRequest)(nil),         // 4: UserIdRequest
-	(*TourIdRequest)(nil),         // 5: TourIdRequest
-	(*Response)(nil),              // 6: Response
-	(*TourListResponse)(nil),      // 7: TourListResponse
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*PageRequest)(nil),           // 4: PageRequest
+	(*UserIdRequest)(nil),         // 5: UserIdRequest
+	(*TourIdRequest)(nil),         // 6: TourIdRequest
+	(*Response)(nil),              // 7: Response
+	(*TourListResponse)(nil),      // 8: TourListResponse
+	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
 }
 var file_tour_proto_depIdxs = []int32{
-	8, // 0: TourDto.publishedDateTime:type_name -> google.protobuf.Timestamp
-	8, // 1: TourDto.archivedDateTime:type_name -> google.protobuf.Timestamp
-	1, // 2: TourDto.tourPoints:type_name -> TourPointDto
-	2, // 3: TourDto.tourCharacteristics:type_name -> TourCharacteristicDto
-	3, // 4: TourDto.tourReviews:type_name -> TourReviewDto
-	8, // 5: TourReviewDto.attendanceDate:type_name -> google.protobuf.Timestamp
-	8, // 6: TourReviewDto.reviewDate:type_name -> google.protobuf.Timestamp
-	0, // 7: TourListResponse.tours:type_name -> TourDto
-	0, // 8: Tour.Create:input_type -> TourDto
-	0, // 9: Tour.Create:output_type -> TourDto
-	9, // [9:10] is the sub-list for method output_type
-	8, // [8:9] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	9,  // 0: TourDto.publishedDateTime:type_name -> google.protobuf.Timestamp
+	9,  // 1: TourDto.archivedDateTime:type_name -> google.protobuf.Timestamp
+	1,  // 2: TourDto.tourPoints:type_name -> TourPointDto
+	2,  // 3: TourDto.tourCharacteristics:type_name -> TourCharacteristicDto
+	3,  // 4: TourDto.tourReviews:type_name -> TourReviewDto
+	9,  // 5: TourReviewDto.attendanceDate:type_name -> google.protobuf.Timestamp
+	9,  // 6: TourReviewDto.reviewDate:type_name -> google.protobuf.Timestamp
+	0,  // 7: TourListResponse.results:type_name -> TourDto
+	0,  // 8: Tour.Create:input_type -> TourDto
+	4,  // 9: Tour.GetByUserId:input_type -> PageRequest
+	0,  // 10: Tour.Create:output_type -> TourDto
+	8,  // 11: Tour.GetByUserId:output_type -> TourListResponse
+	10, // [10:12] is the sub-list for method output_type
+	8,  // [8:10] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_tour_proto_init() }
@@ -822,7 +907,7 @@ func file_tour_proto_init() {
 			}
 		}
 		file_tour_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserIdRequest); i {
+			switch v := v.(*PageRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -834,7 +919,7 @@ func file_tour_proto_init() {
 			}
 		}
 		file_tour_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TourIdRequest); i {
+			switch v := v.(*UserIdRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -846,7 +931,7 @@ func file_tour_proto_init() {
 			}
 		}
 		file_tour_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Response); i {
+			switch v := v.(*TourIdRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -858,6 +943,18 @@ func file_tour_proto_init() {
 			}
 		}
 		file_tour_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_tour_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TourListResponse); i {
 			case 0:
 				return &v.state
@@ -876,7 +973,7 @@ func file_tour_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_tour_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

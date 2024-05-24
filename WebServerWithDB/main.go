@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -130,6 +131,41 @@ func (s *Server) Create(ctx context.Context, request *tour.TourDto) (*tour.TourD
 		Status:          t.Status,
 		Price:           int32(t.Price),
 		UserId:          int64(t.UserID),
+	}
+
+	return response, nil
+}
+
+func (s *Server) GetByUserId(ctx context.Context, request *tour.PageRequest) (*tour.TourListResponse, error) {
+	// Poziv metode FindByUserId iz TourService-a
+	print("Usao je tours!")
+	tours, err := s.TourService.FindByUserId(int(request.UserId))
+	if err != nil {
+		return nil, err
+	}
+
+	// Mapiranje tours u listu TourDto objekata
+	var tourDtos []*tour.TourDto
+	for _, t := range tours {
+		tourDto := &tour.TourDto{
+			Id:                int64(t.ID),
+			Name:              t.Name,
+			PublishedDateTime: timestamppb.New(t.PublishedDateTime),
+			ArchivedDateTime:  timestamppb.New(t.ArchivedDateTime),
+			Description:       t.Description,
+			DifficultyLevel:   t.DifficultyLevel,
+			Tags:              t.Tags,
+			Price:             int32(t.Price),
+			Status:            t.Status,
+			UserId:            int64(t.UserID),
+		}
+		tourDtos = append(tourDtos, tourDto)
+	}
+
+	// Kreiranje TourListResponse objekta
+	response := &tour.TourListResponse{
+		Results:    tourDtos,
+		TotalCount: int32(len(tours)),
 	}
 
 	return response, nil

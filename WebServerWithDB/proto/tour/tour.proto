@@ -5,6 +5,7 @@ import "google/protobuf/timestamp.proto";
 
 service Tour {
     rpc Create(TourDto) returns (TourDto) {}
+    rpc GetByUserId(PageRequest) returns (TourListResponse) {}
 }
 
 message TourDto {
@@ -17,7 +18,7 @@ message TourDto {
     repeated string tags = 7;
     int32 price = 8;
     string status = 9;
-    int64 userId = 10;
+    int64 UserId = 10;
     repeated TourPointDto tourPoints = 11;
     repeated TourCharacteristicDto tourCharacteristics = 12;
     repeated TourReviewDto tourReviews = 13;
@@ -51,6 +52,12 @@ message TourReviewDto {
     int64 tourId = 8;
 }
 
+message PageRequest {
+    int64 userId = 1;
+    int32 page = 2;
+    int32 pageSize = 3;
+}
+
 message UserIdRequest {
     int64 userId = 1;
 }
@@ -65,6 +72,7 @@ message Response {
 }
 
 message TourListResponse {
-    repeated TourDto tours = 1;
+    repeated TourDto results = 1;
+    int32 totalCount = 2;
 }
 
