@@ -22,6 +22,7 @@ const (
 	Tour_Create_FullMethodName      = "/Tour/Create"
 	Tour_GetByUserId_FullMethodName = "/Tour/GetByUserId"
 	Tour_Publish_FullMethodName     = "/Tour/Publish"
+	Tour_Archive_FullMethodName     = "/Tour/Archive"
 )
 
 // TourClient is the client API for Tour service.
@@ -31,6 +32,7 @@ type TourClient interface {
 	Create(ctx context.Context, in *TourDto, opts ...grpc.CallOption) (*TourDto, error)
 	GetByUserId(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TourListResponse, error)
 	Publish(ctx context.Context, in *TourPublishRequest, opts ...grpc.CallOption) (*TourDto, error)
+	Archive(ctx context.Context, in *TourPublishRequest, opts ...grpc.CallOption) (*TourDto, error)
 }
 
 type tourClient struct {
@@ -68,6 +70,15 @@ func (c *tourClient) Publish(ctx context.Context, in *TourPublishRequest, opts .
 	return out, nil
 }
 
+func (c *tourClient) Archive(ctx context.Context, in *TourPublishRequest, opts ...grpc.CallOption) (*TourDto, error) {
+	out := new(TourDto)
+	err := c.cc.Invoke(ctx, Tour_Archive_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TourServer is the server API for Tour service.
 // All implementations must embed UnimplementedTourServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type TourServer interface {
 	Create(context.Context, *TourDto) (*TourDto, error)
 	GetByUserId(context.Context, *PageRequest) (*TourListResponse, error)
 	Publish(context.Context, *TourPublishRequest) (*TourDto, error)
+	Archive(context.Context, *TourPublishRequest) (*TourDto, error)
 	mustEmbedUnimplementedTourServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedTourServer) GetByUserId(context.Context, *PageRequest) (*Tour
 }
 func (UnimplementedTourServer) Publish(context.Context, *TourPublishRequest) (*TourDto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
+}
+func (UnimplementedTourServer) Archive(context.Context, *TourPublishRequest) (*TourDto, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Archive not implemented")
 }
 func (UnimplementedTourServer) mustEmbedUnimplementedTourServer() {}
 
@@ -158,6 +173,24 @@ func _Tour_Publish_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Tour_Archive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TourPublishRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TourServer).Archive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Tour_Archive_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TourServer).Archive(ctx, req.(*TourPublishRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Tour_ServiceDesc is the grpc.ServiceDesc for Tour service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var Tour_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Publish",
 			Handler:    _Tour_Publish_Handler,
+		},
+		{
+			MethodName: "Archive",
+			Handler:    _Tour_Archive_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,6 +4,7 @@ import (
 	"database-example/model"
 	"database-example/repo"
 	"fmt"
+	"time"
 )
 
 type TourService struct {
@@ -72,6 +73,22 @@ func (service *TourService) PublishTourNEW(tourId int) (*model.Tour, error) {
 	}
 
 	tour.Status = "Published"
+	tour.PublishedDateTime = time.Now() // Postavljanje vremena objavljivanja
+	err = service.TourRepo.UpdateTour(&tour)
+	if err != nil {
+		return nil, err
+	}
+
+	return &tour, nil
+}
+
+func (service *TourService) ArchiveTourNEW(tourId int) (*model.Tour, error) {
+	tour, err := service.TourRepo.GetTourById(tourId)
+	if err != nil {
+		return nil, err
+	}
+	tour.Status = "Archived"
+	tour.ArchivedDateTime = time.Now() // Postavljanje vremena arhiviranja
 	err = service.TourRepo.UpdateTour(&tour)
 	if err != nil {
 		return nil, err

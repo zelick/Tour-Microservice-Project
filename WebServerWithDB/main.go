@@ -194,3 +194,27 @@ func (s *Server) Publish(ctx context.Context, request *tour.TourPublishRequest) 
 
 	return response, nil
 }
+
+func (s *Server) Archive(ctx context.Context, request *tour.TourPublishRequest) (*tour.TourDto, error) {
+
+	archiveTour, err := s.TourService.ArchiveTourNEW(int(request.TourId))
+	if err != nil {
+		return nil, err
+	}
+
+	// Mapiranje model.Tour na tour.TourDto
+	response := &tour.TourDto{
+		Id:                int64(archiveTour.ID),
+		Name:              archiveTour.Name,
+		Description:       archiveTour.Description,
+		DifficultyLevel:   archiveTour.DifficultyLevel,
+		Tags:              archiveTour.Tags,
+		Price:             int32(archiveTour.Price),
+		Status:            archiveTour.Status,
+		UserId:            int64(archiveTour.UserID),
+		PublishedDateTime: timestamppb.New(archiveTour.PublishedDateTime),
+		ArchivedDateTime:  timestamppb.New(archiveTour.ArchivedDateTime),
+	}
+
+	return response, nil
+}

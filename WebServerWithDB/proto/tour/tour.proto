@@ -7,6 +7,7 @@ service Tour {
     rpc Create(TourDto) returns (TourDto) {}
     rpc GetByUserId(PageRequest) returns (TourListResponse) {}
     rpc Publish(TourPublishRequest) returns (TourDto) {}
+    rpc Archive(TourPublishRequest) returns (TourDto) {}
 }
 
 message TourDto {
