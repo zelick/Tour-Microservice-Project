@@ -218,3 +218,27 @@ func (s *Server) Archive(ctx context.Context, request *tour.TourPublishRequest) 
 
 	return response, nil
 }
+
+func (s *Server) Delete(ctx context.Context, request *tour.TourIdRequest) (*tour.TourDto, error) {
+	// Pozovi DeleteTourNEW metodu iz servisa
+	deletedTour, err := s.TourService.DeleteTourNEW(int(request.Id))
+	if err != nil {
+		return nil, err
+	}
+
+	// Mapiranje model.Tour na tour.TourDto
+	response := &tour.TourDto{
+		Id:                int64(deletedTour.ID),
+		Name:              deletedTour.Name,
+		Description:       deletedTour.Description,
+		DifficultyLevel:   deletedTour.DifficultyLevel,
+		Tags:              deletedTour.Tags,
+		Price:             int32(deletedTour.Price),
+		Status:            deletedTour.Status,
+		UserId:            int64(deletedTour.UserID),
+		PublishedDateTime: timestamppb.New(deletedTour.PublishedDateTime),
+		ArchivedDateTime:  timestamppb.New(deletedTour.ArchivedDateTime),
+	}
+
+	return response, nil
+}

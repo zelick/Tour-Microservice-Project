@@ -132,6 +132,23 @@ func (service *TourService) DeleteTour(tourId int) error {
 	return nil
 }
 
+func (service *TourService) DeleteTourNEW(tourId int) (*model.Tour, error) {
+	// Pronalaženje ture po ID-ju
+	tour, err := service.TourRepo.GetTourById(tourId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Brisanje ture
+	err = service.TourRepo.DeleteTour(tourId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Vraćanje obrisane ture
+	return &tour, nil
+}
+
 func (service *TourService) ArchiveTour(tourId int) (interface{}, error) {
 	tour, err := service.TourRepo.GetTourById(tourId)
 	if err != nil {
