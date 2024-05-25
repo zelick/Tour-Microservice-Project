@@ -170,3 +170,27 @@ func (s *Server) GetByUserId(ctx context.Context, request *tour.PageRequest) (*t
 
 	return response, nil
 }
+
+func (s *Server) Publish(ctx context.Context, request *tour.TourPublishRequest) (*tour.TourDto, error) {
+
+	publishedTour, err := s.TourService.PublishTourNEW(int(request.TourId))
+	if err != nil {
+		return nil, err
+	}
+
+	// Mapiranje model.Tour na tour.TourDto
+	response := &tour.TourDto{
+		Id:                int64(publishedTour.ID),
+		Name:              publishedTour.Name,
+		Description:       publishedTour.Description,
+		DifficultyLevel:   publishedTour.DifficultyLevel,
+		Tags:              publishedTour.Tags,
+		Price:             int32(publishedTour.Price),
+		Status:            publishedTour.Status,
+		UserId:            int64(publishedTour.UserID),
+		PublishedDateTime: timestamppb.New(publishedTour.PublishedDateTime),
+		ArchivedDateTime:  timestamppb.New(publishedTour.ArchivedDateTime),
+	}
+
+	return response, nil
+}

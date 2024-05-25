@@ -35,6 +35,7 @@ func (service *TourService) FindByUserId(userID int) ([]model.Tour, error) {
 }
 
 func (service *TourService) PublishTour(tourId int) (interface{}, error) {
+
 	tour, err := service.TourRepo.GetTourById(tourId)
 	if err != nil {
 		return nil, err
@@ -62,6 +63,21 @@ func (service *TourService) PublishTour(tourId int) (interface{}, error) {
 	}
 
 	return nil, nil
+}
+
+func (service *TourService) PublishTourNEW(tourId int) (*model.Tour, error) {
+	tour, err := service.TourRepo.GetTourById(tourId)
+	if err != nil {
+		return nil, err
+	}
+
+	tour.Status = "Published"
+	err = service.TourRepo.UpdateTour(&tour)
+	if err != nil {
+		return nil, err
+	}
+
+	return &tour, nil
 }
 
 func (service *TourService) SetTourCharacteristic(tourID int, distance, duration float64, transportType string) error {

@@ -6,6 +6,7 @@ import "google/protobuf/timestamp.proto";
 service Tour {
     rpc Create(TourDto) returns (TourDto) {}
     rpc GetByUserId(PageRequest) returns (TourListResponse) {}
+    rpc Publish(TourPublishRequest) returns (TourDto) {}
 }
 
 message TourDto {
@@ -74,5 +75,9 @@ message Response {
 message TourListResponse {
     repeated TourDto results = 1;
     int32 totalCount = 2;
+}
+
+message TourPublishRequest {
+    int64 tourId = 1;
 }
 
