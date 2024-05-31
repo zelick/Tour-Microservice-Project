@@ -136,7 +136,7 @@ func (s *Server) Create(ctx context.Context, request *tour.TourDto) (*tour.TourD
 	return response, nil
 }
 
-func (s *Server) GetByUserId(ctx context.Context, request *tour.PageRequest) (*tour.TourListResponse, error) {
+func (s *Server) GetByUserId(ctx context.Context, request *tour.PageRequestTour) (*tour.TourListResponse, error) {
 	// Poziv metode FindByUserId iz TourService-a
 	print("Usao je tours!")
 	tours, err := s.TourService.FindByUserId(int(request.UserId))

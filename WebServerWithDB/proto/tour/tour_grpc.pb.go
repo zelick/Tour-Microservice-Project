@@ -31,7 +31,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TourClient interface {
 	Create(ctx context.Context, in *TourDto, opts ...grpc.CallOption) (*TourDto, error)
-	GetByUserId(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TourListResponse, error)
+	GetByUserId(ctx context.Context, in *PageRequestTour, opts ...grpc.CallOption) (*TourListResponse, error)
 	Publish(ctx context.Context, in *TourPublishRequest, opts ...grpc.CallOption) (*TourDto, error)
 	Archive(ctx context.Context, in *TourPublishRequest, opts ...grpc.CallOption) (*TourDto, error)
 	Delete(ctx context.Context, in *TourIdRequest, opts ...grpc.CallOption) (*TourDto, error)
@@ -54,7 +54,7 @@ func (c *tourClient) Create(ctx context.Context, in *TourDto, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *tourClient) GetByUserId(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*TourListResponse, error) {
+func (c *tourClient) GetByUserId(ctx context.Context, in *PageRequestTour, opts ...grpc.CallOption) (*TourListResponse, error) {
 	out := new(TourListResponse)
 	err := c.cc.Invoke(ctx, Tour_GetByUserId_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -95,7 +95,7 @@ func (c *tourClient) Delete(ctx context.Context, in *TourIdRequest, opts ...grpc
 // for forward compatibility
 type TourServer interface {
 	Create(context.Context, *TourDto) (*TourDto, error)
-	GetByUserId(context.Context, *PageRequest) (*TourListResponse, error)
+	GetByUserId(context.Context, *PageRequestTour) (*TourListResponse, error)
 	Publish(context.Context, *TourPublishRequest) (*TourDto, error)
 	Archive(context.Context, *TourPublishRequest) (*TourDto, error)
 	Delete(context.Context, *TourIdRequest) (*TourDto, error)
@@ -109,7 +109,7 @@ type UnimplementedTourServer struct {
 func (UnimplementedTourServer) Create(context.Context, *TourDto) (*TourDto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedTourServer) GetByUserId(context.Context, *PageRequest) (*TourListResponse, error) {
+func (UnimplementedTourServer) GetByUserId(context.Context, *PageRequestTour) (*TourListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByUserId not implemented")
 }
 func (UnimplementedTourServer) Publish(context.Context, *TourPublishRequest) (*TourDto, error) {
@@ -153,7 +153,7 @@ func _Tour_Create_Handler(srv interface{}, ctx context.Context, dec func(interfa
 }
 
 func _Tour_GetByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PageRequest)
+	in := new(PageRequestTour)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func _Tour_GetByUserId_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: Tour_GetByUserId_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TourServer).GetByUserId(ctx, req.(*PageRequest))
+		return srv.(TourServer).GetByUserId(ctx, req.(*PageRequestTour))
 	}
 	return interceptor(ctx, in, info, handler)
 }
