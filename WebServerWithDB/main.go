@@ -176,11 +176,28 @@ func main() {
 
 	// router := mux.NewRouter().StrictSlash(true)
 	// router.Handle("/metrics", promhttp.Handler())
-	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":3200", nil) //tours:3200?
+	//------------------------------------------------------
+	// http.Handle("/metrics", promhttp.Handler())
+	// http.ListenAndServe(":3200", nil) //tours:3200?
+	// go collectMetrics()
+
+	// lis, err := stdnet.Listen("tcp", "tours:3300")
+	// if err != nil {
+	// 	log.Fatalf("failed to listen: %v", err)
+	// }
+	//------------------------------------------
+	// Start HTTP server for metrics on port 3200
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		log.Println("Starting METRICS server on port 3200")
+		log.Fatal(http.ListenAndServe(":3200", nil))
+	}()
+
+	// Start metrics collection in a goroutine
 	go collectMetrics()
 
-	lis, err := stdnet.Listen("tcp", "tours:3200")
+	// Start gRPC server on port 3300
+	lis, err := stdnet.Listen("tcp", ":3300")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -190,7 +207,7 @@ func main() {
 	tour.RegisterTourServer(grpcServer, &Server{TourService: tourService})
 
 	reflection.Register(grpcServer)
-	log.Println("USAO OVDE IZMENA: gRPC server starting on port 3200")
+	log.Println("------------------------Starting gRPC server starting on port 3300!!!!!--------------------")
 	grpcServer.Serve(lis)
 }
 
