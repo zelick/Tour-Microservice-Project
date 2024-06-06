@@ -8,16 +8,117 @@ import (
 	"database-example/repo"
 	"database-example/service"
 	"log"
-	"net"
+	stdnet "net"
 	"net/http"
+	"time"
 
+	//"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/disk"
+	"github.com/shirou/gopsutil/v3/mem"
+	"github.com/shirou/gopsutil/v3/net"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+const serviceName = "tours"
+
+// // prometius da se pokrece?
+// var (
+// 	requestsTotal = prometheus.NewCounterVec(
+// 		prometheus.CounterOpts{
+// 			Name: "http_requests_total",
+// 			Help: "Total number of HTTP requests",
+// 		},
+// 		[]string{"method", "endpoint"},
+// 	)
+// 	requestDuration = prometheus.NewHistogramVec(
+// 		prometheus.HistogramOpts{
+// 			Name: "http_request_duration_seconds",
+// 			Help: "Histogram of response latency (seconds) of HTTP requests.",
+// 		},
+// 		[]string{"method", "endpoint"},
+// 	)
+// )
+
+// func init() {
+// 	prometheus.MustRegister(requestsTotal, requestDuration)
+// }
+
+// func instrumentHandler(next http.HandlerFunc) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		endpoint := r.URL.Path
+// 		method := r.Method
+
+// 		timer := prometheus.NewTimer(requestDuration.WithLabelValues(method, endpoint))
+// 		defer timer.ObserveDuration()
+
+// 		requestsTotal.WithLabelValues(method, endpoint).Inc()
+
+// 		next.ServeHTTP(w, r)
+// 	}
+// }
+
+var (
+	cpuUsage = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "host_cpu_usage_percent",
+		Help: "Current CPU usage percentage",
+	})
+	memUsage = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "host_mem_usage_percent",
+		Help: "Current memory usage percentage",
+	})
+	diskUsage = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "host_disk_usage_percent",
+		Help: "Current disk usage percentage",
+	})
+	netSent = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "host_network_bytes_sent_total",
+		Help: "Total bytes sent over the network",
+	})
+	netRecv = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "host_network_bytes_received_total",
+		Help: "Total bytes received over the network",
+	})
+)
+
+func collectMetrics() {
+	for {
+		// Collect CPU usage
+		cpuPercent, err := cpu.Percent(time.Second, false)
+		if err == nil && len(cpuPercent) > 0 {
+			cpuUsage.Set(cpuPercent[0])
+		}
+
+		// Collect memory usage
+		virtualMem, err := mem.VirtualMemory()
+		if err == nil {
+			memUsage.Set(virtualMem.UsedPercent)
+		}
+
+		// Collect disk usage
+		diskInfo, err := disk.Usage("/")
+		if err == nil {
+			diskUsage.Set(diskInfo.UsedPercent)
+		}
+
+		// Collect network usage
+		netIO, err := net.IOCounters(false)
+		if err == nil && len(netIO) > 0 {
+			netSent.Add(float64(netIO[0].BytesSent))
+			netRecv.Add(float64(netIO[0].BytesRecv))
+		}
+
+		time.Sleep(10 * time.Second) // Adjust the collection interval as needed
+	}
+}
 
 func initDB() *gorm.DB {
 	dsn := "user=postgres password=super dbname=explorer host=database port=5432 sslmode=disable search_path=tours"
@@ -58,9 +159,9 @@ func startTourServer(handler *handler.TourHandler, tourObjectHandler *handler.To
 	router.HandleFunc("/publicTourPoint/setPublicTourPoint/{tourPointId}", publicTourPointHandler.CreateFromTourPointId).Methods("GET")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
-	log.Println("Server starting on port 3000")
+	log.Println("Server starting on port 3200")
 
-	log.Fatal(http.ListenAndServe(":3000", router))
+	log.Fatal(http.ListenAndServe(":3200", router))
 }
 
 func main() {
@@ -73,7 +174,13 @@ func main() {
 	tourRepo := &repo.TourRepository{DatabaseConnection: database}
 	tourService := &service.TourService{TourRepo: tourRepo}
 
-	lis, err := net.Listen("tcp", "tours:3000")
+	// router := mux.NewRouter().StrictSlash(true)
+	// router.Handle("/metrics", promhttp.Handler())
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":3200", nil) //tours:3200?
+	go collectMetrics()
+
+	lis, err := stdnet.Listen("tcp", "tours:3200")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -83,7 +190,7 @@ func main() {
 	tour.RegisterTourServer(grpcServer, &Server{TourService: tourService})
 
 	reflection.Register(grpcServer)
-	log.Println("gRPC server starting on port 3000")
+	log.Println("USAO OVDE IZMENA: gRPC server starting on port 3200")
 	grpcServer.Serve(lis)
 }
 

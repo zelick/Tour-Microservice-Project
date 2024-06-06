@@ -4,5 +4,5 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-EXPOSE 3000
+EXPOSE 3200
 ENTRYPOINT ["go", "run", "main.go"]
