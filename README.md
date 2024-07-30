@@ -8,10 +8,10 @@
 * Additional Modules: Besides the "tour" module, other parts of the monolithic application were also converted into microservices. Document-oriented databases, such as MongoDB and Neo4j, were used to effectively manage various data needs in these modules.
 
 ### Technologies
-* Microservice Implementation: Developed in Go (Golang) for managing the "tour" functionality.
-* Database Management: PostgreSQL 
-* Front-End Interface: Built with Angular using TypeScript, HTML, and CSS, and communicates with the back-end through RESTful APIs.
-* Back-End Integration: C# (ASP.NET) is used to interface with the Go-based microservice and handle requests.
+* Microservice implementation: Developed in Go (Golang) for managing the "tour" functionality.
+* Database: PostgreSQL 
+* Front-end Interface: Built with Angular and communicates with the back-end through RESTful APIs.
+* Back-end Integration: C# (ASP.NET) is used to interface with the Go-based microservice and handle requests.
 * Service Orchestration: Managed and deployed with Docker to simplify operations and ensure smooth integration.
 
 ### Transition to gRPC
