@@ -7,16 +7,11 @@
 * The "tour" module was extracted from the monolithic application and refactored into a dedicated microservice written in Go (Golang). This microservice handles all logic related to tours, enabling better scalability and maintenance.
 
 ### Technologies
-* ### Microservice Implementation:
-  Developed in Go (Golang) for managing the "tour" functionality.
-* ### Database Management:
-  Utilizes PostgreSQL for data storage and management.
-* ### Front-End Interface:
-  Built with Angular using TypeScript, HTML, and CSS, and communicates with the back-end through RESTful APIs.
-* ### Back-End Integration:
-  C# (ASP.NET) is used to interface with the Go-based microservice, handle requests, and coordinate the overall application flow.
-* ### Service Orchestration:
-  Managed and deployed using Docker to streamline microservice operations and ensure efficient integration
+* Microservice Implementation: Developed in Go (Golang) for managing the "tour" functionality.
+* Database Management: PostgreSQL 
+* Front-End Interface: built with Angular using TypeScript, HTML, and CSS, and communicates with the back-end through RESTful APIs.
+* Back-End Integration: C# (ASP.NET) is used to interface with the Go-based microservice and handle requests.
+* Service Orchestration: Managed and deployed with Docker to simplify operations and ensure smooth integration.
 
 ### Transition to gRPC
 gRPC has been implemented using Protocol Buffers (Protobuf) and .proto files. This setup ensures efficient data exchange and clear API documentation, enhancing communication speed and system performance.
