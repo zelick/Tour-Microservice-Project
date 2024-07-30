@@ -17,7 +17,7 @@
 ### Transition to gRPC
 gRPC has been implemented using Protocol Buffers (Protobuf) and .proto files. This setup ensures efficient data exchange and clear API documentation, enhancing communication speed and system performance.
 
-# Application Setup
+### Application Setup
 To set up the project locally using Docker, follow these steps:
 * Clone the repository
 * Navigate to the project directory
